@@ -7,14 +7,14 @@ import Cookie from 'js-cookie';
 import { useRouter } from 'next/router';
 
 const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Productos', href: '/dashboard/products/', current: false },
-  { name: 'Ventas', href: '#', current: false },
+  { name: 'Panel Principal', href: '#', current: true },
+  // { name: 'Productos', href: '/dashboard/products/', current: false },
+  // { name: 'Ventas', href: '#', current: false },
 ];
 const userNavigation = [
-  { name: 'Your Profile', href: '#' },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' },
+  // { name: 'Your Profile', href: '#' },
+  // { name: 'Settings', href: '#' },
+  { name: 'Cerrar Sesión', href: '#' },
 ];
 
 function classNames(...classes) {
@@ -85,13 +85,13 @@ export default function Header() {
                 </div>
                 <div className="hidden md:block">
                   <div className="ml-4 flex items-center md:ml-6">
-                    <button
+                    {/* <button
                       type="button"
                       className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                     >
                       <span className="sr-only">View notifications</span>
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
+                    </button> */}
 
                     {/* Profile dropdown */}
                     <Menu as="div" className="ml-3 relative">
@@ -161,13 +161,13 @@ export default function Header() {
                     <div className="text-base font-medium leading-none text-white">{user.name}</div>
                     <div className="text-sm font-medium leading-none text-gray-400">{user.email}</div>
                   </div>
-                  <button
+                  {/* <button
                     type="button"
                     className="ml-auto bg-gray-800 flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                   >
                     <span className="sr-only">View notifications</span>
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
+                  </button> */}
                 </div>
                 <div className="mt-3 px-2 space-y-1">
                   <span>{user.name}</span>
