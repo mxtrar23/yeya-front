@@ -8,6 +8,7 @@
       "@layout/*":["layout/*"],
       "@services/*":["services/*"],
       "@hooks/*":["hooks/*"],
+      "@schemas/*":["schemas/*"],
     }
   }
 }

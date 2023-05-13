@@ -1,10 +1,12 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 import useFetch from '@hooks/useFetch';
 import endPoints from '@services/api';
 import Modal from '@common/Modal';
 import { CheckIcon, ChevronDownIcon, LinkIcon } from '@heroicons/react/20/solid';
 import { Menu, Transition } from '@headlessui/react';
 import FormRegisters from '@common/FormRegisters';
+import Alert from '@common/Alert';
+import useAlert from '@hooks/useAlert';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -12,10 +14,25 @@ function classNames(...classes) {
 
 export default function Dashboard() {
   const [open, setOpen] = useState(false);
+  // const [registers, setregisters] = useState(null);
+  const { alert, setAlert, toggleAlert } = useAlert();
+
+  // useEffect(() => {
+  //   Getdata();
+  // }, []);
+
+  // useEffect(() => {
+  //   Getdata();
+  // }, [alert]);
+
+  // const Getdata = () => {
   const registers = useFetch(endPoints.registers.list);
+  //   setregisters(data);
+  // };
 
   return (
     <>
+      <Alert alert={alert} handleClose={toggleAlert} />
       <div className="lg:flex lg:items-center lg:justify-between mb-4">
         <div className="min-w-0 flex-1"></div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
@@ -99,34 +116,35 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {registers?.map((register) => (
-                    <tr key={register.reg_id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          {/* <div className="flex-shrink-0 h-10 w-10">
+                  {Array.isArray(registers) &&
+                    registers?.map((register) => (
+                      <tr key={register.reg_id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            {/* <div className="flex-shrink-0 h-10 w-10">
                             <Image className="h-10 w-10 rounded-full" src={person.image} alt="" width={100} height={100} />
                           </div> */}
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-500">{register.cat_categories.name}</div>
-                            <div className="text-sm text-gray-900">{register.descripcion}</div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-gray-500">{register.cat_categories.name}</div>
+                              <div className="text-sm text-gray-900">{register.descripcion}</div>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{register.createdAt}</div>
-                        {/* <div className="text-sm text-gray-500">{person.department}</div> */}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{register.value}</span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{register.type}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="/edit" className="text-indigo-600 hover:text-indigo-900">
-                          Edit
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{register.createdAt}</div>
+                          {/* <div className="text-sm text-gray-500">{person.department}</div> */}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{register.value}</span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{register.type}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <a href="/edit" className="text-indigo-600 hover:text-indigo-900">
+                            Edit
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -134,7 +152,7 @@ export default function Dashboard() {
         </div>
       </div>
       <Modal open={open} setOpen={setOpen}>
-        <FormRegisters />
+        <FormRegisters setOpen={setOpen} setAlert={setAlert} />
       </Modal>
     </>
   );
