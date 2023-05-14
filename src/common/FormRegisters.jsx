@@ -2,10 +2,14 @@ import { useRef, useState } from 'react';
 import { RegisterSchema } from '@schemas/RegisterSchema';
 import moment from 'moment';
 import { addRegisters } from '@services/api/registers';
+import useFetch from '@hooks/useFetch';
+import endPoints from '@services/api';
 
 export default function FormRegisters({ setOpen, setAlert }) {
   const [error, seterror] = useState(null);
   const formRef = useRef(null);
+
+  const categories = useFetch(endPoints.categories.list);
 
   const handleSubmit = async (e) => {
     seterror(null);
@@ -17,14 +21,13 @@ export default function FormRegisters({ setOpen, setAlert }) {
       value: parseInt(formData.get('price')),
       descripcion: formData.get('description'),
       categoryId: formData.get('category'),
-      // createdAt: formData.get('createdAt'),
+      date: formData.get('date'),
       // images: [formData.get('images').name],
     };
     const val = await validaForm(data);
     if (val) {
-      // console.log({ ...val, createdAt: moment(val.createdAt).format() });
-      // addRegisters({ ...val, createdAt: moment(val.createdAt).format() }).then((response) => {
-      addRegisters({ ...val })
+      if (!window.confirm('Confirma para continuar')) return;
+      addRegisters(data)
         .then(() => {
           setAlert({
             active: true,
@@ -84,19 +87,33 @@ export default function FormRegisters({ setOpen, setAlert }) {
                   autoComplete="description"
                   rows="3"
                   className="form-textarea mt-1 block w-full mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                  placeholder="Descripción breve del registro"
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                   Price
                 </label>
-                <input type="number" name="price" id="price" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                <input
+                  type="number"
+                  name="price"
+                  id="price"
+                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                  defaultValue="0"
+                  pattern="^\$\d{1,3}(.\d{3,3})*$"
+                />
               </div>
               <div className="col-span-6 sm:col-span-3">
-                <label htmlFor="createdAt" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="date" className="block text-sm font-medium text-gray-700">
                   Fecha
                 </label>
-                <input type="date" name="createdAt" id="createdAt" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                <input
+                  type="date"
+                  name="date"
+                  id="date"
+                  defaultValue={moment().format('YYYY-MM-DD')}
+                  className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                />
               </div>
               <div className="col-span-6">
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700">
@@ -108,7 +125,12 @@ export default function FormRegisters({ setOpen, setAlert }) {
                   autoComplete="category-name"
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 >
-                  <option value="add56b25-64bf-4e0d-a0af-ab29b3cf9588">Nomina</option>
+                  {categories &&
+                    categories.map((categ, i) => (
+                      <option key={i} value={categ.id}>
+                        {categ.name}
+                      </option>
+                    ))}
                 </select>
               </div>
 

@@ -9,12 +9,13 @@ const endPoints = {
   categories: {
     list: `${API}/api/v1/categories`,
     create: `${API}/api/v1/categories`,
-    edit: (id) => `${API}/api/v1/categories${id}`,
+    edit: (id) => `${API}/api/v1/categories/${id}`,
   },
   registers: {
     list: `${API}/api/v1/registers`,
     create: `${API}/api/v1/registers`,
-    edit: (id) => `${API}/api/v1/registers${id}`,
+    edit: (id) => `${API}/api/v1/registers/${id}`,
+    delete: (id) => `${API}/api/v1/registers/${id}`,
   },
 };
 

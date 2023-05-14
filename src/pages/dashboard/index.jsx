@@ -1,12 +1,14 @@
 import React, { useState, Fragment, useEffect } from 'react';
-import useFetch from '@hooks/useFetch';
-import endPoints from '@services/api';
 import Modal from '@common/Modal';
-import { CheckIcon, ChevronDownIcon, LinkIcon } from '@heroicons/react/20/solid';
+import { CheckIcon, ChevronDownIcon, LinkIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { Menu, Transition } from '@headlessui/react';
 import FormRegisters from '@common/FormRegisters';
 import Alert from '@common/Alert';
 import useAlert from '@hooks/useAlert';
+import moment from 'moment';
+import 'moment/locale/es';
+import { getMyRegisters, deleteRegister } from '@services/api/registers';
+moment.locale('es');
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -14,19 +16,50 @@ function classNames(...classes) {
 
 export default function Dashboard() {
   const [open, setOpen] = useState(false);
-  // const [registers, setregisters] = useState(null);
+  const [registers, setregisters] = useState(null);
   const { alert, setAlert, toggleAlert } = useAlert();
 
-  // useEffect(() => {
-  //   Getdata();
-  // }, []);
+  useEffect(() => {
+    async function getRegisters() {
+      const response = await getMyRegisters();
+      setregisters(response);
+    }
+    try {
+      getRegisters();
+    } catch (error) {
+      console.log('====================================');
+      console.log(error);
+      console.log('====================================');
+    }
+  }, [alert]);
+
+  const handleDelete = (id) => {
+    if (!window.confirm('Confirma para continuar')) return;
+    deleteRegister(id)
+      .then(() => {
+        setAlert({
+          active: true,
+          message: 'Registro eliminado',
+          type: 'warning',
+          autoClose: true,
+        });
+      })
+      .catch((error) => {
+        setAlert({
+          active: true,
+          message: error.message,
+          type: 'error',
+          autoClose: false,
+        });
+      });
+  };
 
   // useEffect(() => {
   //   Getdata();
   // }, [alert]);
 
   // const Getdata = () => {
-  const registers = useFetch(endPoints.registers.list);
+  // const registers = useFetch(endPoints.registers.list);
   //   setregisters(data);
   // };
 
@@ -131,7 +164,7 @@ export default function Dashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{register.createdAt}</div>
+                          <div className="text-sm text-gray-900">{moment(register.date).format('LL')}</div>
                           {/* <div className="text-sm text-gray-500">{person.department}</div> */}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -142,6 +175,9 @@ export default function Dashboard() {
                           <a href="/edit" className="text-indigo-600 hover:text-indigo-900">
                             Edit
                           </a>
+                        </td>
+                        <td>
+                          <XCircleIcon className="flex-shrink-0 h-6 w-6 text-gray-400 cursor-pointer" aria-hidden="true" onClick={() => handleDelete(register.id)} />
                         </td>
                       </tr>
                     ))}
