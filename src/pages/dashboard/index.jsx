@@ -1,13 +1,16 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import Modal from '@common/Modal';
-import { CheckIcon, ChevronDownIcon, LinkIcon, XCircleIcon } from '@heroicons/react/20/solid';
+import { PlusIcon, ChevronDownIcon, FolderPlusIcon } from '@heroicons/react/20/solid';
 import { Menu, Transition } from '@headlessui/react';
 import FormRegisters from '@common/FormRegisters';
-import Alert from '@common/Alert';
-import useAlert from '@hooks/useAlert';
 import moment from 'moment';
-import 'moment/locale/es';
+import useAlert from '@hooks/useAlert';
+import Alert from '@common/Alert';
+import FormCategory from '@common/FormCategory';
+import RegisterTable from '@components/RegisterTable';
 import { getMyRegisters, deleteRegister } from '@services/api/registers';
+import 'moment/locale/es';
+
 moment.locale('es');
 
 function classNames(...classes) {
@@ -15,7 +18,9 @@ function classNames(...classes) {
 }
 
 export default function Dashboard() {
-  const [open, setOpen] = useState(false);
+  const [openRegister, setOpenRegister] = useState(false);
+  const [openCategory, setOpenCategory] = useState(false);
+  const [register, setregister] = useState(null);
   const [registers, setregisters] = useState(null);
   const { alert, setAlert, toggleAlert } = useAlert();
 
@@ -54,6 +59,16 @@ export default function Dashboard() {
       });
   };
 
+  const showtoNewRegister = () => {
+    setregister(null);
+    setOpenRegister(true);
+  };
+
+  const showtoEditRegister = (register) => {
+    setregister(register);
+    setOpenRegister(true);
+  };
+
   // useEffect(() => {
   //   Getdata();
   // }, [alert]);
@@ -70,8 +85,12 @@ export default function Dashboard() {
         <div className="min-w-0 flex-1"></div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
           <span className="ml-3 hidden sm:block">
-            <button type="button" className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-              <LinkIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+            <button
+              type="button"
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              onClick={() => setOpenCategory(true)}
+            >
+              <FolderPlusIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
               Nueva Categoría
             </button>
           </span>
@@ -80,9 +99,9 @@ export default function Dashboard() {
             <button
               type="button"
               className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              onClick={() => setOpen(true)}
+              onClick={() => showtoNewRegister()}
             >
-              <CheckIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
+              <PlusIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
               Nuevo Registro
             </button>
           </span>
@@ -125,70 +144,13 @@ export default function Dashboard() {
       </div>
 
       <div className="flex flex-col">
-        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Descripción
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Fecha
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Fecha
-                    </th>
-                    <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">Edit</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {Array.isArray(registers) &&
-                    registers?.map((register) => (
-                      <tr key={register.reg_id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            {/* <div className="flex-shrink-0 h-10 w-10">
-                            <Image className="h-10 w-10 rounded-full" src={person.image} alt="" width={100} height={100} />
-                          </div> */}
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-500">{register.cat_categories.name}</div>
-                              <div className="text-sm text-gray-900">{register.descripcion}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{moment(register.date).format('LL')}</div>
-                          {/* <div className="text-sm text-gray-500">{person.department}</div> */}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{register.value}</span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{register.type}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <a href="/edit" className="text-indigo-600 hover:text-indigo-900">
-                            Edit
-                          </a>
-                        </td>
-                        <td>
-                          <XCircleIcon className="flex-shrink-0 h-6 w-6 text-gray-400 cursor-pointer" aria-hidden="true" onClick={() => handleDelete(register.id)} />
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+        <RegisterTable registers={registers} showtoEditRegister={showtoEditRegister} handleDelete={handleDelete} />
       </div>
-      <Modal open={open} setOpen={setOpen}>
-        <FormRegisters setOpen={setOpen} setAlert={setAlert} />
+      <Modal open={openRegister} setOpen={setOpenRegister} titleModal={`${register ? 'Modificar' : 'Nuevo'} Registro`}>
+        <FormRegisters setOpen={setOpenRegister} register={register} />
+      </Modal>
+      <Modal open={openCategory} setOpen={setOpenCategory} titleModal="Nueva Categoría">
+        <FormCategory setOpen={setOpenCategory} />
       </Modal>
     </>
   );

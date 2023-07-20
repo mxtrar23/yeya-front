@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react';
 import { RegisterSchema } from '@schemas/RegisterSchema';
 import moment from 'moment';
-import { addRegisters } from '@services/api/registers';
+import { addRegisters, editRegister } from '@services/api/registers';
 import useFetch from '@hooks/useFetch';
 import endPoints from '@services/api';
 
-export default function FormRegisters({ setOpen, setAlert }) {
+export default function FormCategory({ setOpen, setAlert, register }) {
   const [error, seterror] = useState(null);
   const formRef = useRef(null);
+  console.log(register);
 
   const categories = useFetch(endPoints.categories.list);
 
@@ -24,27 +25,50 @@ export default function FormRegisters({ setOpen, setAlert }) {
       date: formData.get('date'),
       // images: [formData.get('images').name],
     };
+    console.log('data', data);
+    console.log('register', register);
     const val = await validaForm(data);
     if (val) {
       if (!window.confirm('Confirma para continuar')) return;
-      addRegisters(data)
-        .then(() => {
-          setAlert({
-            active: true,
-            message: 'Registro guardado correctamente!',
-            type: 'success',
-            autoClose: false,
+      if (register) {
+        editRegister(register.id, data)
+          .then(() => {
+            setAlert({
+              active: true,
+              message: 'Registro modificado correctamente!',
+              type: 'success',
+              autoClose: false,
+            });
+            setOpen(false);
+          })
+          .catch((error) => {
+            setAlert({
+              active: true,
+              message: 'Error:' + error.message,
+              type: 'error',
+              autoClose: false,
+            });
           });
-          setOpen(false);
-        })
-        .catch((error) => {
-          setAlert({
-            active: true,
-            message: 'Error:' + error.message,
-            type: 'error',
-            autoClose: false,
+      } else {
+        addRegisters(data)
+          .then(() => {
+            setAlert({
+              active: true,
+              message: 'Registro guardado correctamente!',
+              type: 'success',
+              autoClose: false,
+            });
+            setOpen(false);
+          })
+          .catch((error) => {
+            setAlert({
+              active: true,
+              message: 'Error:' + error.message,
+              type: 'error',
+              autoClose: false,
+            });
           });
-        });
+      }
     }
   };
 
@@ -60,6 +84,7 @@ export default function FormRegisters({ setOpen, setAlert }) {
   return (
     <>
       <form ref={formRef} onSubmit={handleSubmit}>
+        <input type="hidden" name="id" id="id" defaultValue={register?.id || null} />
         <div className="overflow-hidden">
           <div className="px-4 py-5 bg-white sm:p-6">
             <div className="grid grid-cols-6 gap-6">
@@ -72,6 +97,7 @@ export default function FormRegisters({ setOpen, setAlert }) {
                   name="type"
                   autoComplete="type-name"
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  defaultValue={register?.type}
                 >
                   <option value="I">Entrada</option>
                   <option value="E">Salida</option>
@@ -88,6 +114,7 @@ export default function FormRegisters({ setOpen, setAlert }) {
                   rows="3"
                   className="form-textarea mt-1 block w-full mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                   placeholder="Descripción breve del registro"
+                  defaultValue={register?.descripcion}
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -99,8 +126,8 @@ export default function FormRegisters({ setOpen, setAlert }) {
                   name="price"
                   id="price"
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                  defaultValue="0"
                   pattern="^\$\d{1,3}(.\d{3,3})*$"
+                  defaultValue={register?.value || 0}
                 />
               </div>
               <div className="col-span-6 sm:col-span-3">
@@ -111,7 +138,7 @@ export default function FormRegisters({ setOpen, setAlert }) {
                   type="date"
                   name="date"
                   id="date"
-                  defaultValue={moment().format('YYYY-MM-DD')}
+                  defaultValue={register?.date || moment().format('YYYY-MM-DD')}
                   className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                 />
               </div>
@@ -124,6 +151,7 @@ export default function FormRegisters({ setOpen, setAlert }) {
                   name="category"
                   autoComplete="category-name"
                   className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  defaultValue={register?.categoryId}
                 >
                   {categories &&
                     categories.map((categ, i) => (

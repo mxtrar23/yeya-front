@@ -5,6 +5,14 @@ const constants = {
     singup: 'Registro',
     login: 'Iniciar',
   },
+  registerTypes: {
+    I: 'Entrada',
+    E: 'Salida',
+  },
+  registerColorTypes: {
+    I: 'green',
+    E: 'red',
+  },
 };
 
 export default constants;

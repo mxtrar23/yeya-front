@@ -30,4 +30,16 @@ const deleteRegister = async (id) => {
   return response;
 };
 
-export { addRegisters, getMyRegisters, deleteRegister };
+const editRegister = async (id, body) => {
+  const config = {
+    headers: {
+      accept: '*/*',
+      'Content-Type': 'application/json',
+    },
+  };
+  const response = await axios.patch(endPoints.registers.edit(id), body, config);
+
+  return response.data;
+};
+
+export { addRegisters, getMyRegisters, deleteRegister, editRegister };
