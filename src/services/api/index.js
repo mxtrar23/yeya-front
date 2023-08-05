@@ -1,4 +1,4 @@
-const API = process.env.NEXT_PUBLIC_API_URL || 'https://yeya-back-w3a2-dev.fl0.io';
+const API = process.env.NEXT_PUBLIC_API_URL ?? 'https://yeya-back-w3a2-dev.fl0.io';
 
 const endPoints = {
   info: `${API}/info`,
