@@ -1,15 +1,17 @@
-import { useState } from 'react';
-import { Dialog } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+// import { useState } from 'react';
+// import { Dialog } from '@headlessui/react';
+// import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
-const navigation = [
-  { name: 'Product', href: '#' },
-  { name: 'Features', href: '#' },
-  { name: 'Marketplace', href: '#' },
-  { name: 'Company', href: '#' },
-];
+import Link from 'next/link';
+
+// const navigation = [
+//   { name: 'Product', href: '#' },
+//   { name: 'Features', href: '#' },
+//   { name: 'Marketplace', href: '#' },
+//   { name: 'Company', href: '#' },
+// ];
 export default function Home() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  // const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="bg-white">
@@ -95,15 +97,15 @@ export default function Home() {
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Sistema de registro de dinero personal</h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">Aqui podrás llevar el control de tus gastos y poder controlarlos con el fin de que no te quedes sin dinero. Atrevete a probarlo.</p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <a
+              <Link
                 href="/login"
                 className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Iniciar Sesión
-              </a>
-              <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+              </Link>
+              <Link href="#" className="text-sm font-semibold leading-6 text-gray-900">
                 Registrarse <span aria-hidden="true">→</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
